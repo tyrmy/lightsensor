@@ -27,7 +27,7 @@ sql.create_connection("sensordata.db")
 sql.write_to_database('''INSERT INTO sensor_readings (ldr, sunpanel, text_datetime)
 VALUES({LDR}, {SUN}, datetime('now','localtime'));
 '''.format(LDR=ldr.value, SUN=sunpanel.value))
-sql.print_quary('SELECT * FROM sensor_readings;')
+#sql.print_quary('SELECT * FROM sensor_readings;')
 #print('{}\t{:>5.3f}\t'.format(ldr.value, ldr.voltage))
 #print('{}\t{:>5.3f}'.format(sunpanel.value, sunpanel.voltage))
 sql.close_connection()
