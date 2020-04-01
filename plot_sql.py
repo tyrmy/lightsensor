@@ -2,8 +2,6 @@ import sqlite3 as db
 import matplotlib.pyplot as plt
 import datetime
 
-# Plots the last 12 days of ldr and sunpanel data as daily plot profiles. Still messy
-
 def convert_datetimes(datetimes):
     datetime_objects = []
     for datetime_str in datetimes:
