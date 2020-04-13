@@ -1,35 +1,33 @@
+"""
+Created on 10 Apr, 2020
+
+@author Lassi Lehtinen
+
+Script generates a plot of last fully measured day when run seperately
+"""
 import sqlite3 as db
 import matplotlib.dates as dates
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 import datetime
+
+from tools import convert_datetimes
+from tools import generate_days
 
 import numpy as np
 from math import ceil
 
-def convert_datetimes(datetimes):
-    datetime_objects = []
-    for datetime_str in datetimes:
-        datetime_objects.append(datetime.datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S'))
-    return datetime_objects
-
-def generate_days(num):
-    a = datetime.date.today()
-    dates = []
-    for x in range (0, num):
-        dates.append(a - datetime.timedelta(days = x))
-    dates.sort()
-    return dates
-
 def print_last_full_day():
-    conn = db.connect('sensordata.db')
+    """
+    Prints a figure of last fully measured day
+    """
+    conn = db.connect('../sensordata.db')
     c = conn.cursor()
 
     a = datetime.date.today()
     a = a - datetime.timedelta(days = 1)
 
     results = c.execute('SELECT ldr, sunpanel, text_datetime FROM sensor_readings WHERE text_datetime LIKE \'{date}%\''.format(date=a)).fetchall()
-    plt.figure(figsize=(7,7), constrained_layout=False)
+    plt.figure(figsize=(12,8), constrained_layout=False, tight_layout=True)
 
     ldr = []
     sunpanel = []
@@ -39,12 +37,8 @@ def print_last_full_day():
        sunpanel.append(row[1]) 
        datetimes.append(row[2]) 
 
-    max_value = 0
+    max_value = max(ldr)
     scale_value = 1.7
-
-    for j in ldr:
-        if j > max_value:
-            max_value = j
 
     ldr[:] = [(max_value-x)*scale_value for x in ldr]
     total_ldr = ceil(np.trapz(ldr))
@@ -57,7 +51,6 @@ def print_last_full_day():
 
     ax = plt.gca()
     plt.gcf().autofmt_xdate()
-    #ax.xaxis.set_major_locator(hours)
     ax.xaxis.set_major_locator(dates.HourLocator())
     ax.xaxis.set_major_formatter(dates.DateFormatter('%H:%M'))
     ax.xaxis.set_minor_locator(dates.MinuteLocator(interval=15))
@@ -67,8 +60,10 @@ def print_last_full_day():
     ax.text(0.95, 0.99, total_sp, verticalalignment='top', horizontalalignment='right', transform=ax.transAxes, color='orange', fontsize=12)
     ax.grid(True)
 
-    plt.show()
+    #plt.show()
+    plt.savefig('{}_day_sum.png'.format(datetime.datetime.today()), dpi=150, frameon=True)
     conn.close()
 
-print_last_full_day()
-exit()
+if __name__ == '__main__':
+    print_last_full_day()
+    exit()

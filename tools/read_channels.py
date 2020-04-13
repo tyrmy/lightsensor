@@ -13,19 +13,18 @@ ads = ADS.ADS1115(i2c)
 # ads = ADS.ADS1115(i2c, address=0x49)
 
 # Create single-ended input on channel 0
-ldr = AnalogIn(ads, ADS.P0)
-sunpanel = AnalogIn(ads, ADS.P1)
+ch0 = AnalogIn(ads, ADS.P0)
+ch1 = AnalogIn(ads, ADS.P1)
+#ch2 = AnalogIn(ads, ADS.P2)
+#ch3 = AnalogIn(ads, ADS.P3)
 ads.gain = 1
 
-# Create differential input between channel 0 and 1
-# chan = AnalogIn(ads, ADS.P0, ADS.P1)
-
-print("{:>5}\t{:>5}\t{:>5}\t{:>5}".format("ldr raw", "ldr v", "sp raw", "sp v"))
+print("{:>5}\t{:>5}\t{:>5}\t{:>5}".format("ch0 raw", "ch0 v", "ch1 raw", "ch1 v"))
 
 while True:
     try:
-        print('{}\t{:>5.3f}\t'.format(ldr.value, ldr.voltage), end='')
-        print('{}\t{:>5.3f}'.format(sunpanel.value, sunpanel.voltage))
+        print('{}\t{:>5.3f}\t'.format(ch0.value, ch0.voltage), end='')
+        print('{}\t{:>5.3f}'.format(ch1.value, ch1.voltage))
         time.sleep(1)
     except KeyboardInterrupt:
         print("Closing...")

@@ -1,29 +1,24 @@
+"""
+Created on 10 Apr, 2020
+
+@author Lassi Lehtinen
+
+Script generates a plot of last 12 days when run seperately including todays measurements
+"""
 import sqlite3 as db
 import matplotlib.dates as dates
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import datetime
 
+from tools import convert_datetimes
+from tools import generate_days
+
 import numpy as np
 from math import ceil
 
-def convert_datetimes(datetimes):
-    datetime_objects = []
-    for datetime_str in datetimes:
-        datetime_objects.append(datetime.datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S'))
-    return datetime_objects
-
-def generate_days(num):
-    a = datetime.date.today()
-    dates = []
-    for x in range (0, num):
-        dates.append(a - datetime.timedelta(days = x))
-    dates.sort()
-    return dates
-
-conn = db.connect('sensordata.db')
+conn = db.connect('../sensordata.db')
 c = conn.cursor()
-
 
 input_date = generate_days(12)
 #fig, ax = plt.subplots()
@@ -77,6 +72,6 @@ for i in range(1,len(input_date)+1):
     plt.gcf().autofmt_xdate()
     #plt.legend()
 
-plt.suptitle('12-day summary', fontsize=14)
+plt.suptitle('12-day summary', fontsize=16)
 plt.show()
 conn.close()
