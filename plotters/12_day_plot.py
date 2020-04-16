@@ -5,14 +5,14 @@ Created on 10 Apr, 2020
 
 Script generates a plot of last 12 days when run seperately including todays measurements
 """
+
 import sqlite3 as db
 import matplotlib.dates as dates
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import datetime
 
-from tools import convert_datetimes
-from tools import generate_days
+import tools
 
 import numpy as np
 from math import ceil
@@ -20,7 +20,7 @@ from math import ceil
 conn = db.connect('../sensordata.db')
 c = conn.cursor()
 
-input_date = generate_days(12)
+input_date = tools.generate_days(12)
 #fig, ax = plt.subplots()
 #print(input_date[0].isoformat())
 total_points = c.execute('SELECT COUNT(*) FROM sensor_readings').fetchone()[0]
@@ -54,7 +54,7 @@ for i in range(1,len(input_date)+1):
     ldr[:] = [(max_value-x)*scale_value for x in ldr]
     total_ldr = ceil(np.trapz(ldr))
     total_sp = ceil(np.trapz(sunpanel))
-    datetime_objects = convert_datetimes(datetimes)
+    datetime_objects = tools.convert_datetimes(datetimes)
 
     plt.subplot(3,4,i)
     plt.title(input_date[i-1], fontsize=9)

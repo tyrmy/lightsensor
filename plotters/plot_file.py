@@ -5,14 +5,13 @@ Created on 12 Apr, 2020
 
 Script generates a custom plot and stores it as .png file
 """
+
 import sqlite3 as db
 import matplotlib.dates as dates
 import matplotlib.pyplot as plt
 import datetime
 
-from tools import convert_datetimes
-from tools import generate_days
-from tools import print_stats
+import tools
 
 import numpy as np
 from math import ceil
@@ -27,7 +26,7 @@ def print_day_plot(x,y,days):
     conn = db.connect('../sensordata.db')
     c = conn.cursor()
     plt.figure(figsize=(11,19), constrained_layout=False, tight_layout=True)
-    input_date = generate_days(days)
+    input_date = tools.generate_days(days)
 
     for i in range(1,len(input_date)+1):
         results = c.execute('SELECT ldr, sunpanel, text_datetime FROM sensor_readings WHERE text_datetime LIKE \'{date}%\''.format(date=input_date[i-1])).fetchall()
@@ -47,7 +46,7 @@ def print_day_plot(x,y,days):
         ldr[:] = [(max_value-x)*scale_value for x in ldr]
         total_ldr = ceil(np.trapz(ldr))
         total_sp = ceil(np.trapz(sunpanel))
-        datetime_objects = convert_datetimes(datetimes)
+        datetime_objects = tools.convert_datetimes(datetimes)
 
         plt.subplot(y,x,i)
         plt.title(input_date[i-1], fontsize=10)
@@ -73,6 +72,6 @@ def print_day_plot(x,y,days):
     conn.close()
 
 if __name__ == '__main__':
-    print_stats(database_location)
+    tools.print_stats(database_location)
     #print_day_plot(3,3,9)
     print_day_plot(2,11,22)

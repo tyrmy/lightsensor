@@ -5,6 +5,7 @@ Created on 10 Apr, 2020
 
 Script generates a plot of last fully measured day when run seperately
 """
+
 import sqlite3 as db
 import matplotlib.dates as dates
 import matplotlib.pyplot as plt
