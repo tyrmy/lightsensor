@@ -21,19 +21,13 @@ def translate(input_array, multiplier):
     result[:] = [(max_y-old)*-multiplier for old in input_array]
     return result
 
-def print_stats(location):
+def yesterday():
     """
-    Prints sql database stats.
+    Return a datetime object representing yesterday
     """
-    conn = db.connect(location)
-    c = conn.cursor()
-    total_points = c.execute('SELECT COUNT(*) FROM sensor_readings').fetchone()[0]
-    distinct_dates_amount = len(c.execute('SELECT DISTINCT DATE(text_datetime) FROM sensor_readings').fetchall())
-    distinct_dates = c.execute('SELECT DISTINCT DATE(text_datetime) FROM sensor_readings').fetchall()
-    conn.close()
-
-    print("Total datapoints: {}".format(total_points))
-    print("Data collected on span of {} days.".format(distinct_dates_amount))
+    a = datetime.date.today()
+    a = a - datetime.timedelta(days = 1)
+    return a
 
 def convert_datetimes(datetimes):
     """

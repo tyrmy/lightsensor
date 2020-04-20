@@ -10,20 +10,16 @@ import sqlite3 as db
 import matplotlib.dates as dates
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-
 import datetime
+
 import tools
-
-database_location = '../sensordata.db'
-
-def get_values():
-    pass
+import config
 
 def density2d(span, search):
     conn = db.connect('../sensordata.db')
     c = conn.cursor()
     plt.figure(figsize=(8,8), constrained_layout=False, tight_layout=True)
-    input_date = tools.generate_days_from(span,2020,4,14)
+    input_date = tools.generate_days(span)
     
     y = []
     x = []
@@ -37,13 +33,17 @@ def density2d(span, search):
             x.append(idx)
             idx += 1
 
-    y = tools.translate(y, 0.05)
-    #plt.scatter(x, y, s=10, alpha=0.4, c='b')
+    y = tools.translate(y, -0.05)
     plt.suptitle('{}-day 2D-density plot'.format(span), fontsize=16)
-    plt.hist2d(x,y,bins=60,norm=mcolors.PowerNorm(0.1))
+    plt.hist2d(x,y,bins=90,norm=mcolors.PowerNorm(0.1))
     plt.show()
 
+    if (config.picture):
+        plt.savefig('{}_{}-day_density.png'.format(datetime.datetime.today(),span), dpi=100, frameon=True)
+
+    conn.close()
+
 if __name__ == '__main__':
-    tools.print_stats(database_location)
+    tools.print_stats(config.database_location)
     #density2d(20, 'ldr')
-    density2d(20, 'sunpanel')
+    density2d(config.density_span, 'ldr')
