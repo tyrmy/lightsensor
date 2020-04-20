@@ -22,6 +22,9 @@ from math import ceil
 
 class plotter:
     def __init__(self):
+        """
+        Constructs a new plotter
+        """
         self.sql_obj = SQL(config.database_location)
         self.print_stats()
 
@@ -37,13 +40,17 @@ class plotter:
         print("Data collected on span of {} days.".format(distinct_dates_amount))
 
     def close(self):
+        """
+        Closes the sql interface connection
+        """
         self.sql_obj.close_connection()
 
-    def read_values(self,x,y):
-        pass
 
     def density2d(self, span, search, bamount):
-        plt.figure(figsize=(8,8), constrained_layout=False, tight_layout=True)
+        """
+        Plots a density function
+        """
+        plt.figure(figsize=(9,5), constrained_layout=False)
         input_date = tools.generate_days(span)
         
         y = []
@@ -61,10 +68,9 @@ class plotter:
         y = tools.translate(y, -0.05)
         plt.suptitle('{}-day 2D-density plot'.format(span), fontsize=16)
         plt.hist2d(x,y,bins=bamount,norm=mcolors.PowerNorm(0.1))
-        plt.show()
-
         if (config.picture):
             plt.savefig('{}_{}-day_density.png'.format(datetime.datetime.today(),span), dpi=100, frameon=True)
+        plt.show()
 
     def summary_plot(self,x,y,days):
         """
@@ -107,10 +113,10 @@ class plotter:
 
         plt.gcf().autofmt_xdate()
         plt.suptitle('{}-day summary'.format(days), fontsize=16)
-        plt.show()
-
         if (config.picture):
             plt.savefig('{}_{}-day_sum.png'.format(datetime.datetime.today(),days), dpi=100, frameon=True)
+        plt.show()
+
 
     def gradient(self, span, search):
         """
@@ -143,10 +149,10 @@ class plotter:
 
         plt.xlim(left=datetime.date.today(), right=datetime.date.today() + datetime.timedelta(days=1))
         plt.suptitle('{}-day gradient'.format(span), fontsize=16)
-        plt.show()
-
         if (config.picture):
             plt.savefig('{}_{}-day_gradient.png'.format(datetime.datetime.today(),span), dpi=100, frameon=True)
+        plt.show()
+
 
     def yesterday(self):
         """
@@ -186,9 +192,9 @@ class plotter:
         ax.text(0.95, 0.99, total_sp, verticalalignment='top', horizontalalignment='right', transform=ax.transAxes, color='orange', fontsize=12)
         ax.grid(True)
 
-        plt.show()
         if (config.picture):
             plt.savefig('{}_day_sum.png'.format(datetime.datetime.today()), dpi=150, frameon=True)
+        plt.show()
 
 if __name__ == '__main__':
     print('plotter: demonstration')

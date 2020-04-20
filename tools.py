@@ -1,7 +1,7 @@
 """
 Created on 10 Apr, 2020
 
-@Author Lassi Lehtinen
+@author Lassi Lehtinen
 
 Utility functions
 """
