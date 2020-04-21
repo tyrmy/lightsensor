@@ -2,9 +2,10 @@
 Created on 12 Apr, 2020
 
 @author Lassi Lehtinen
+
 Device-end script used to store values from ADS1115 to sqlite database.
 
-ADS1115 is to be connected via SPI communication to Raspberry Pi for script to function properly.
+ADS1115 is to be connected via i2c communication to Raspberry Pi for script to function properly.
 """
 #import board
 #import busio

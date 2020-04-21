@@ -19,19 +19,16 @@ import config
 
 import numpy as np
 from math import ceil
+from scipy.signal import savgol_filter
 
 class plotter:
     def __init__(self):
-        """
-        Constructs a new plotter
-        """
+        """Constructs a new plotter"""
         self.sql_obj = SQL(config.database_location)
         self.print_stats()
 
     def print_stats(self):
-        """
-        Prints sql database stats.
-        """
+        """Prints sql database stats."""
         total_points = self.sql_obj.count_values('sensor_readings')
         distinct_dates_amount = len(self.sql_obj.return_quary(('SELECT DISTINCT DATE(text_datetime) FROM sensor_readings')))
         #distinct_dates = self.sql_obj.return_quary(('SELECT DISTINCT DATE(text_datetime) FROM sensor_readings'))
@@ -40,16 +37,11 @@ class plotter:
         print("Data collected on span of {} days.".format(distinct_dates_amount))
 
     def close(self):
-        """
-        Closes the sql interface connection
-        """
+        """Closes the sql interface connection"""
         self.sql_obj.close_connection()
 
-
-    def density2d(self, span, search, bamount):
-        """
-        Plots a density function
-        """
+    def density2d(self, span=config.density_span, search=config.target, resolution=config.resolution2d):
+        """Plots a density function"""
         plt.figure(figsize=(9,5), constrained_layout=False)
         input_date = tools.generate_days(span)
         
@@ -67,15 +59,13 @@ class plotter:
 
         y = tools.translate(y, -0.05)
         plt.suptitle('{}-day 2D-density plot'.format(span), fontsize=16)
-        plt.hist2d(x,y,bins=bamount,norm=mcolors.PowerNorm(0.1))
+        plt.hist2d(x,y,bins=resolution,norm=mcolors.PowerNorm(0.1))
         if (config.picture):
             plt.savefig('{}_{}-day_density.png'.format(datetime.datetime.today(),span), dpi=100, frameon=True)
         plt.show()
 
-    def summary_plot(self,x,y,days):
-        """
-        Create a image file consisting of x times y plots on a specified span of days.
-        """
+    def summary_plot(self,x=config.x,y=config.y,days=config.total):
+        """Create a image file consisting of x times y plots on a specified span of days."""
         plt.figure(figsize=(6,9), constrained_layout=False, tight_layout=True)
         input_date = tools.generate_days(days)
 
@@ -99,8 +89,12 @@ class plotter:
 
             plt.subplot(y,x,i)
             plt.title(input_date[i-1], fontsize=10)
-            plt.plot(datetime_objects, y1, label='LDR', linewidth=1)
-            plt.plot(datetime_objects, y2, label='SP')
+            plt.plot(datetime_objects, y2, linewidth=config.linewidths, label='SP')
+            if (config.savgol):
+                y1_smooth = savgol_filter(y1, config.savgol_window, config.savgol_degree)
+                plt.plot(datetime_objects, y1_smooth, linewidth=config.linewidths, alpha=0.7, c='r')
+            else:
+                plt.plot(datetime_objects, y1, linewidth=config.linewidths, label='LDR')
             ax = plt.gca()
             ax.grid(True)
             ax.xaxis.set_major_locator(dates.HourLocator(interval=3))
@@ -118,10 +112,8 @@ class plotter:
         plt.show()
 
 
-    def gradient(self, span, search):
-        """
-        Create a gradient plot of one value
-        """
+    def gradient(self, span=config.gradient_span, search=config.target):
+        """Create a gradient plot of one value"""
         plt.figure(figsize=(10,7), constrained_layout=False, tight_layout=True)
         input_date = tools.generate_days(span)
 
@@ -155,9 +147,7 @@ class plotter:
 
 
     def yesterday(self):
-        """
-        Prints a figure of last fully measured day
-        """
+        """Prints a figure of last fully measured day"""
         a = tools.yesterday()
 
         results = self.sql_obj.return_quary('SELECT ldr, sunpanel, text_datetime FROM sensor_readings WHERE text_datetime LIKE \'{date}%\''.format(date=a))
@@ -178,8 +168,13 @@ class plotter:
         datetime_objects = tools.convert_datetimes(datetimes)
 
         plt.title(a)
-        plt.plot(datetime_objects, ldr, label='LDR')
-        plt.plot(datetime_objects, sunpanel, label='SP')
+        plt.plot(datetime_objects, ldr, linewidth=config.linewidths, label='LDR')
+        plt.plot(datetime_objects, sunpanel, linewidth=config.linewidths, label='SP')
+
+        # Prints smooth data curve if true
+        if (config.savgol):
+            smooth_ldr = savgol_filter(ldr, config.savgol_window, config.savgol_degree)
+            plt.plot(datetime_objects, smooth_ldr, linewidth=config.linewidths, alpha=0.7, c='r')
 
         ax = plt.gca()
         plt.gcf().autofmt_xdate()
@@ -196,16 +191,21 @@ class plotter:
             plt.savefig('{}_day_sum.png'.format(datetime.datetime.today()), dpi=150, frameon=True)
         plt.show()
 
-if __name__ == '__main__':
-    print('plotter: demonstration')
-    pl = plotter()
-    print('plotter: one day plot')
-    pl.yesterday()
-    print('plotter: summary plot')
-    pl.summary_plot(config.x, config.y, config.total)
-    print('plotter: gradient plot')
-    pl.gradient(config.gradient_span, config.target)
-    print('plotter: 2D density plot')
-    pl.density2d(config.density_span, config.target, config.resolution2d)
+    def demonstration():
+        """Demonstration of all plotter functions"""
+        print('plotter: demonstration')
+        print('plotter: one day plot')
+        self.yesterday()
+        print('plotter: summary plot')
+        self.summary_plot()
+        print('plotter: gradient plot')
+        self.gradient()
+        print('plotter: 2D density plot')
+        self.density2d()
 
+if __name__ == '__main__':
+    pl = plotter()
+    #pl.yesterday()
+    pl.summary_plot()
+    #pl.density2d(resolution=50)
     pl.close()
