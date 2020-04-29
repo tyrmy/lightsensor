@@ -148,7 +148,10 @@ class plotter:
 
     def yesterday(self):
         """Prints a figure of last fully measured day"""
-        a = tools.yesterday()
+        if config.today:
+            a = tools.yesterday()
+        else:
+            a = datetime.date(config.year, config.month, config.date)
 
         results = self.sql_obj.return_quary('SELECT ldr, sunpanel, text_datetime FROM sensor_readings WHERE text_datetime LIKE \'{date}%\''.format(date=a))
         plt.figure(figsize=(12,8), constrained_layout=False, tight_layout=True)
@@ -191,9 +194,9 @@ class plotter:
             plt.savefig('{}_day_sum.png'.format(datetime.datetime.today()), dpi=150, frameon=True)
         plt.show()
 
-    def demonstration():
+    def demonstration(self):
         """Demonstration of all plotter functions"""
-        print('plotter: demonstration')
+        print('DEMONSTRATION')
         print('plotter: one day plot')
         self.yesterday()
         print('plotter: summary plot')
@@ -206,6 +209,7 @@ class plotter:
 if __name__ == '__main__':
     pl = plotter()
     #pl.yesterday()
-    pl.summary_plot()
+    #pl.summary_plot()
+    pl.demonstration()
     #pl.density2d(resolution=50)
     pl.close()
