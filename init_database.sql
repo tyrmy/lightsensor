@@ -5,11 +5,11 @@ CREATE TABLE IF NOT EXISTS sensor_readings (
     text_datetime text NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS 2ch_sensor (
+CREATE TABLE IF NOT EXISTS two_ch_sensor (
     id integer PRIMARY KEY,
     ldr integer,
     sunpanel integer,
-    txt_date text NOT NULL
+    txt_date text NOT NULL,
     txt_time text NOT NULL
 );
 
@@ -19,6 +19,6 @@ CREATE TABLE IF NOT EXISTS ads1115 (
     ch1 integer,
     ch2 integer,
     ch3 integer,
-    txt_date text NOT NULL
+    txt_date text NOT NULL,
     txt_time text NOT NULL
 );

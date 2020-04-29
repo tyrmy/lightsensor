@@ -14,20 +14,20 @@ An example database is provided for demo.
 
 ## Example plots
 
-![plot](/images/figure_2.png)
+![plot](./images/figure_1.png)
 
 ---
 
-![plot](/images/figure_3.png)
+![plot](./images/figure_3.png)
 
 ---
 
-![plot](/images/figure_4.png)
+![plot](./images/figure_4.png)
 
 ---
 
-![plot](/images/figure_5.png)
+![plot](./images/figure_5.png)
 
 ---
 
-![plot](/images/figure_6.png)
+![plot](./images/figure_6.png)

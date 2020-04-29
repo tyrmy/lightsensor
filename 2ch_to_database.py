@@ -7,13 +7,11 @@ Device-end script used to store values from ADS1115 to sqlite database.
 
 ADS1115 is to be connected via i2c communication to Raspberry Pi for script to function properly.
 """
-#import board
-#import busio
-#import adafruit_ads1x15.ads1115 as ADS
-#from adafruit_ads1x15.analog_in import AnalogIn
+import board, busio
+import adafruit_ads1x15.ads1115 as ADS
+from adafruit_ads1x15.analog_in import AnalogIn
 
 from sql.sqlite import sqlite_object as SQL
-import plotters.config as config
 
 def store_values():
     """
@@ -32,7 +30,7 @@ def store_values():
     '''.format(LDR=ch0.value, SUN=ch1.value)
 
     sql = SQL()
-    sql.create_connection(config.database_location)
+    sql.create_connection('./databases/sensordata.db')
     sql.write_to_database(command)
     sql.close_connection()
 
